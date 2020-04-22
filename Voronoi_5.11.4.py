@@ -383,16 +383,19 @@ def makeMountains():
         increase2 = np.zeros(image.size)
         convergeComplete2 = np.zeros(image.size)
         startingPeak = random.uniform(.7,.90)
-        for i in range(randNum):#for mountain length
+        r = 0
+        for q in range(randNum):#for mountain length
             addPos = random.choice(new_position)
-            newPos = (mountain[i][0]+addPos[0],mountain[i][1]+addPos[1])#nex mountain location
-            if(prevHeight[newPos[0]][newPos[1]] != True and terrainOrigin[newPos[0]][newPos[1]] != True and convergeComplete[newPos[0]][newPos[1]] == True and terrainFall[newPos[0]][newPos[1]] == True
-               and newPos[0] <= (imgx - 1) and newPos[0] >= 0 and
-               newPos[1] <= (imgy-1) or newPos[1] >= 0):#if it goes through for loop, go through for loop, is added as new mountain spin location
-                mountain.append(newPos)
-                prevHeight[newPos[0]][newPos[1]] = True
-                increase2[newPos[0]][newPos[1]] = startingPeak + random.uniform(0.0,.1)#mountain pos starting height
-                convergeComplete2[newPos[0]][newPos[1]] = True       
+            newPos = (mountain[r][0]+addPos[0],mountain[r][1]+addPos[1])#next mountain location
+            if((newPos[0] < (imgx - 1) and newPos[0] > 0 and
+               newPos[1] < (imgy-1) and newPos[1] > 0)):
+                if(prevHeight[newPos[0]][newPos[1]] != True and terrainOrigin[newPos[0]][newPos[1]] != True and convergeComplete[newPos[0]][newPos[1]] == True and terrainFall[newPos[0]][newPos[1]] == True):
+               #if it goes through for loop, go through for loop, is added as new mountain spine location
+                    mountain.append(newPos)
+                    prevHeight[newPos[0]][newPos[1]] = True
+                    increase2[newPos[0]][newPos[1]] = startingPeak + random.uniform(0.0,.1)#mountain pos starting height
+                    convergeComplete2[newPos[0]][newPos[1]] = True
+                    r += 1
         image.save("mountain.png", "PNG")
         i = 0
         converge2 = []
@@ -594,7 +597,7 @@ def rest():
     for x in range(imgx):#Marks pixels that are continental crust
         for y in range(imgy):
             if(heightMap[x][y] >= 0.0):
-                landTotal[x][y] = True
+                oceanCrustTotal[x][y] = True
     col = (0,0,0)
     for y in range(imgy):
         for x in range(imgx):
@@ -605,45 +608,45 @@ def rest():
             elif heightMap[x][y] < 0.0:
                 col = (217,236,255)
                 if(y != 0 and heightMap[x][y-1] < 0.0):#if current height is continental crust and next to
-                  borderShelf[x][y-1] = True#ocean height, add them to landList
-                  landFall[x][y] = True
-                  landList.append([x,y])
+                  borderShelf[x][y-1] = True#ocean height, add them to oceanCrustList
+                  oceanCrustBord[x][y] = True
+                  oceanCrustList.append([x,y])
                 if(y != imgy-1 and heightMap[x][y+1] < 0.0):
                   borderShelf[x][y+1] = True
-                  landFall[x][y] = True
-                  landList.append([x,y])
+                  oceanCrustBord[x][y] = True
+                  oceanCrustList.append([x,y])
                 if(x != 0 and heightMap[x-1][y] < 0.0 ):
                   borderShelf[x-1][y] = True
-                  landFall[x][y] = True
-                  landList.append([x,y])
+                  oceanCrustBord[x][y] = True
+                  oceanCrustList.append([x,y])
                 elif(x == 0 and heightMap[imgx-1][y] < 0.0 ):
                   borderShelf[imgx-1][y] = True
-                  landFall[x][y] = True
-                  landList.append([x,y])
+                  oceanCrustBord[x][y] = True
+                  oceanCrustList.append([x,y])
                 if(x != imgx-1 and heightMap[x+1][y] < 0.0 ):
                   borderShelf[x+1][y] = True
-                  landFall[x][y] = True
-                  landList.append([x,y])
+                  oceanCrustBord[x][y] = True
+                  oceanCrustList.append([x,y])
                 elif(x == imgx-1 and heightMap[0][y] < 0.0 ):
                   borderShelf[0][y] = True
-                  landFall[x][y] = True
-                  landList.append([x,y])
+                  oceanCrustBord[x][y] = True
+                  oceanCrustList.append([x,y])
                 if(x != imgx-1 and y != imgy-1 and heightMap[x+1][y+1] < 0.0 ):
                   borderShelf[x+1][y+1] = True
-                  landFall[x][y] = True
-                  landList.append([x,y])
+                  oceanCrustBord[x][y] = True
+                  oceanCrustList.append([x,y])
                 if(x != 0 and y != 0 and heightMap[x-1][y-1] < 0.0 ):
                   borderShelf[x-1][y-1] = True
-                  landFall[x][y] = True
-                  landList.append([x,y])
+                  oceanCrustBord[x][y] = True
+                  oceanCrustList.append([x,y])
                 if(x != imgx-1 and y != 0 and heightMap[x+1][y-1] < 0.0 ):
                   borderShelf[x+1][y-1] = True
-                  landFall[x][y] = True
-                  landList.append([x,y])
+                  oceanCrustBord[x][y] = True
+                  oceanCrustList.append([x,y])
                 if(x != 0 and y != imgy-1 and heightMap[x-1][y+1] < 0.0 ):
                   borderShelf[x-1][y+1] = True
-                  landFall[x][y] = True
-                  landList.append([x,y])
+                  oceanCrustBord[x][y] = True
+                  oceanCrustList.append([x,y])
             elif heightMap[x][y] < 0.0667:
                 col = (0,192,96) 
             elif heightMap[x][y] < 0.1667:
@@ -658,19 +661,19 @@ def rest():
                 col = (255,255,255)
             putpixel((x,y), col)
     i = 0
-    for j in range(len(landList)):
-        x = landList[i][0]
-        y = landList[i][1]
-        landOrigin[x][y] = True
+    for j in range(len(oceanCrustList)):
+        x = oceanCrustList[i][0]
+        y = oceanCrustList[i][1]
+        oceanCrustOrigin[x][y] = True
         heightMap[x][y] = 0.0
         i += 1
     i = 0
-    for j in landList:
-        x = landList[i][0]
-        y = landList[i][1]
+    for j in oceanCrustList:
+        x = oceanCrustList[i][0]
+        y = oceanCrustList[i][1]
         elev = 0
         num = 0
-        if(landOrigin[x][y] != True): #if not landOrigin, add up neighbors and divde by their num to get new height
+        if(oceanCrustOrigin[x][y] != True): #if not oceanCrustOrigin, add up neighbors and divde by their num to get new height
             if(y != 0):
               elev += heightMap[x][y-1]
               num += 1
@@ -703,41 +706,41 @@ def rest():
               num += 1
             if(num != 0):
                 heightMap[x][y] = (elev/num)+ .02 #Add .02 to height
-        if(y != 0 and landTotal[x,y-1] == True and (landFall[x][y-1] != True)):#add neighbors to conOcean list and mark them as visited
-              landList.append([x,y-1])
-              landFall[x][y-1] = True            
-        if(y != imgy-1 and landTotal[x][y+1] == True and (landFall[x][y+1] != True)):
-              landList.append([x,y+1])
-              landFall[x][y+1] = True            
-        if(x != 0 and landTotal[x-1][y] == True and (landFall[x-1][y] != True)):
-              landList.append([x-1,y])
-              landFall[x-1][y] = True
-        elif(x == 0 and landTotal[imgx-1][y] == True and (landFall[imgx-1][y] != True)):
-              landList.append([imgx-1,y])
-              landFall[imgx-1][y] = True
-        if(x != imgx-1 and landTotal[x+1][y] == True and (landFall[x+1][y] != True)):
-              landList.append([x+1,y])
-              landFall[x+1][y] = True
-        elif(x == imgx-1 and landTotal[0][y] == True and (landFall[0][y] != True)):
-              landList.append([0,y])
-              landFall[0][y] = True 
-        if(x != imgx-1 and y != imgy-1 and landTotal[x+1][y+1] == True and landFall[x+1][y+1] != True):
-              landList.append([x+1,y+1])
-              landFall[x+1][y+1] = True
-        if(x != 0 and y != 0 and landTotal[x-1][y-1] == True and landFall[x-1][y-1] != True):
-              landList.append([x-1,y-1])
-              landFall[x-1][y-1] = True
-        if(x != imgx-1 and y != 0 and landTotal[x+1][y-1] == True and landFall[x+1][y-1] != True):
-              landList.append([x+1,y-1])
-              landFall[x+1][y-1] = True
-        if(x != 0 and y != imgy-1 and landTotal[x-1][y+1] == True and landFall[x-1][y+1] != True):
-              landList.append([x-1,y+1])
-              landFall[x-1][y+1] = True
+        if(y != 0 and oceanCrustTotal[x,y-1] == True and (oceanCrustBord[x][y-1] != True)):#add neighbors to conOcean list and mark them as visited
+              oceanCrustList.append([x,y-1])
+              oceanCrustBord[x][y-1] = True            
+        if(y != imgy-1 and oceanCrustTotal[x][y+1] == True and (oceanCrustBord[x][y+1] != True)):
+              oceanCrustList.append([x,y+1])
+              oceanCrustBord[x][y+1] = True            
+        if(x != 0 and oceanCrustTotal[x-1][y] == True and (oceanCrustBord[x-1][y] != True)):
+              oceanCrustList.append([x-1,y])
+              oceanCrustBord[x-1][y] = True
+        elif(x == 0 and oceanCrustTotal[imgx-1][y] == True and (oceanCrustBord[imgx-1][y] != True)):
+              oceanCrustList.append([imgx-1,y])
+              oceanCrustBord[imgx-1][y] = True
+        if(x != imgx-1 and oceanCrustTotal[x+1][y] == True and (oceanCrustBord[x+1][y] != True)):
+              oceanCrustList.append([x+1,y])
+              oceanCrustBord[x+1][y] = True
+        elif(x == imgx-1 and oceanCrustTotal[0][y] == True and (oceanCrustBord[0][y] != True)):
+              oceanCrustList.append([0,y])
+              oceanCrustBord[0][y] = True 
+        if(x != imgx-1 and y != imgy-1 and oceanCrustTotal[x+1][y+1] == True and oceanCrustBord[x+1][y+1] != True):
+              oceanCrustList.append([x+1,y+1])
+              oceanCrustBord[x+1][y+1] = True
+        if(x != 0 and y != 0 and oceanCrustTotal[x-1][y-1] == True and oceanCrustBord[x-1][y-1] != True):
+              oceanCrustList.append([x-1,y-1])
+              oceanCrustBord[x-1][y-1] = True
+        if(x != imgx-1 and y != 0 and oceanCrustTotal[x+1][y-1] == True and oceanCrustBord[x+1][y-1] != True):
+              oceanCrustList.append([x+1,y-1])
+              oceanCrustBord[x+1][y-1] = True
+        if(x != 0 and y != imgy-1 and oceanCrustTotal[x-1][y+1] == True and oceanCrustBord[x-1][y+1] != True):
+              oceanCrustList.append([x-1,y+1])
+              oceanCrustBord[x-1][y+1] = True
         i += 1
     col = (0,0,0)
     for y in range(imgy):
         for x in range(imgx):
-            if landTotal[x][y] == True:
+            if oceanCrustTotal[x][y] == True:
                 if heightMap[x][y] < 0.0:
                     col = (217,236,255)
                 elif heightMap[x][y] < 0.0667:
@@ -756,7 +759,7 @@ def rest():
     world2 = generateNoise(wid,hei,100,12,.5)
     for x in range(imgx):
         for y in range(imgy):#add noise to world height
-            if(landTotal[x][y] == True):
+            if(oceanCrustTotal[x][y] == True):
                 heightMap[x][y] += (heightMap[x][y]+.3)* (world2[x][y])
             elif (heightMap[x][y] <= -0.1):
                 heightMap[x][y] += (heightMap[x][y]-.5)* (world2[x][y])
@@ -768,7 +771,7 @@ def rest():
     col = (0,0,0)
     for y in range(imgy):
         for x in range(imgx):#Finds terrain that borders continental crust
-            if landTotal[x][y] == True:
+            if oceanCrustTotal[x][y] == True:
                 if heightMap[x][y] < 0.0:
                     col = (217,236,255)
                 elif heightMap[x][y] < 0.0667:
@@ -909,13 +912,13 @@ def rest():
     testCurrentMovement = []
     #at starting currents, if not continental shelf, keep moving left.
     for x in range(imgx):
-        if(landFall[x][yHalf+5] != True):
+        if(oceanCrustBord[x][yHalf+5] != True):
             putpixel((x,yHalf+5), (0,255,0))
             currentColor[x][yHalf+5] = yHalf+5
             currentMovement.append([x,yHalf+5])
             testCurrentMovement.append([x,yHalf+5])
             alreadyInCurrent[x][yHalf+5] = True
-        if(landFall[x][yHalf-5] != True):
+        if(oceanCrustBord[x][yHalf-5] != True):
             putpixel((x,yHalf-5), (0,255,0))
             currentColor[x][yHalf-5] = yHalf-5
             currentMovement.append([x,yHalf-5])
@@ -929,38 +932,38 @@ def rest():
         black = (0,0,0)
         red = (255,0,0)
         blue = (0,0,255)
-        newTest = False #if current is next to continental shelf, give it a color and it passes test
-        if(y != 0 and landFall[x][y-1] == True):
+        isInCurrentTest = False #if current is next to continental shelf, give it a color and it passes test
+        if(y != 0 and oceanCrustBord[x][y-1] == True):
             putpixel((x,y), (0,255,0))
-            newTest = True
-        elif(y != imgy-1 and landFall[x][y+1] == True):
+            isInCurrentTest = True
+        elif(y != imgy-1 and oceanCrustBord[x][y+1] == True):
             putpixel((x,y), (0,255,0))
-            newTest = True
-        elif(x != 0 and landFall[x-1][y] == True):
+            isInCurrentTest = True
+        elif(x != 0 and oceanCrustBord[x-1][y] == True):
             putpixel((x,y), (0,255,0))
-            newTest = True
-        elif(x == 0 and landFall[imgx-1][y] == True):
+            isInCurrentTest = True
+        elif(x == 0 and oceanCrustBord[imgx-1][y] == True):
             putpixel((x,y), (0,255,0))
-            newTest = True
-        elif(x != imgx-1 and landFall[x+1][y] == True):
+            isInCurrentTest = True
+        elif(x != imgx-1 and oceanCrustBord[x+1][y] == True):
             putpixel((x,y), (0,255,0))
-            newTest = True
-        elif(x == imgx-1 and landFall[0][y] == True ):
+            isInCurrentTest = True
+        elif(x == imgx-1 and oceanCrustBord[0][y] == True ):
             putpixel((x,y), (0,255,0))
-            newTest = True
-        elif(x != imgx-1 and y != imgy-1 and landFall[x+1][y+1] == True):
+            isInCurrentTest = True
+        elif(x != imgx-1 and y != imgy-1 and oceanCrustBord[x+1][y+1] == True):
             putpixel((x,y), (0,255,0))
-            newTest = True
-        elif(x != 0 and y != 0 and landFall[x-1][y-1] == True):
+            isInCurrentTest = True
+        elif(x != 0 and y != 0 and oceanCrustBord[x-1][y-1] == True):
             putpixel((x,y), (0,255,0))
-            newTest = True
-        elif(x != imgx-1 and y != 0 and landFall[x+1][y-1] == True):
+            isInCurrentTest = True
+        elif(x != imgx-1 and y != 0 and oceanCrustBord[x+1][y-1] == True):
             putpixel((x,y), (0,255,0))
-            newTest = True
-        elif(x != 0 and y != imgy-1 and landFall[x-1][y+1] == True):
+            isInCurrentTest = True
+        elif(x != 0 and y != imgy-1 and oceanCrustBord[x-1][y+1] == True):
             putpixel((x,y), (0,255,0))
-            newTest = True
-        if (newTest == True):#if it passes test
+            isInCurrentTest = True
+        if (isInCurrentTest == True):#if it passes test
             newCurr[x][y] = True #give pixel color depending on current location and origins
             if (currentColor[x][y] == yHalf and y > yHalf):
                 putpixel((x,y), black)
@@ -993,143 +996,143 @@ def rest():
         if(y == yHalf):
             putpixel((x,y), (255,0,0))
             currentColor[x][y] = yHalf #yHalf is new origin
-            if(x != imgx-1 and x >= 3 and landFall[x+1][y] == True and newCurr[x-2][y] == True):#draws arrow if next to continenal shelf
+            if(x != imgx-1 and x >= 3 and oceanCrustBord[x+1][y] == True and newCurr[x-2][y] == True):#draws arrow if next to continenal shelf
                 rightArrow(x,y)
-            if(x != imgx-1 and landFall[x+1][y] != True): #if not continental shelf, add only one neighbor in current direction and it fails test
+            if(x != imgx-1 and oceanCrustBord[x+1][y] != True): #if not continental shelf, add only one neighbor in current direction and it fails test
                 putpixel((x,y), black)
                 currentMovement.append([x+1,y])
                 alreadyInCurrent[x+1][y] = True
                 newCurr[x+1][y] = True
-                newTest = False
-            elif(x == imgx-1 and landFall[0][y] != True):
+                isInCurrentTest = False
+            elif(x == imgx-1 and oceanCrustBord[0][y] != True):
                 putpixel((0,y), black)
                 currentMovement.append([0,y])
                 alreadyInCurrent[0][y] = True
                 newCurr[0][y] = True
-                newTest = False
+                isInCurrentTest = False
         if(y == yHalf - 5 or y == yHalf + 5 ):
             putpixel((x,y), (0,0,255))
             if (y == yHalf - 5):
                 currentColor[x][y] = yHalf - 5#yHalf-5 is new origin
             elif(y == yHalf + 5):
                 currentColor[x][y] = yHalf + 5#yHalf+5 is new origin
-            if(x != 0 and x <= imgx - 3 and landFall[x-1][y] == True and newCurr[x+2][y] == True ):#draws arrow if next to continenal shelf
+            if(x != 0 and x <= imgx - 3 and oceanCrustBord[x-1][y] == True and newCurr[x+2][y] == True ):#draws arrow if next to continenal shelf
                 leftArrow(x,y)
-            if(x != 0 and landFall[x-1][y] != True):#if not continental shelf, add only one neighbor in current direction and it fails test
+            if(x != 0 and oceanCrustBord[x-1][y] != True):#if not continental shelf, add only one neighbor in current direction and it fails test
                 putpixel((x,y), black)
                 currentMovement.append([x-1,y])
                 alreadyInCurrent[x-1][y] = True
                 newCurr[x-1][y] = True
-                newTest = False
-            elif(x == 0 and landFall[imgx-1][y] != True):
+                isInCurrentTest = False
+            elif(x == 0 and oceanCrustBord[imgx-1][y] != True):
                 putpixel((imgx-1,y), black)
                 currentMovement.append([imgx-1,y])
                 alreadyInCurrent[imgx-1][y] = True
                 newCurr[imgx-1][y] = True
-                newTest = False
+                isInCurrentTest = False
         if(y == yHalf - westWinds or y == yHalf + westWinds):
             putpixel((x,y), (255,0,0))
             if (y == yHalf - westWinds):#westerlies are new origin
                 currentColor[x][y] = yHalf - westWinds
             elif(y == yHalf + westWinds):
                 currentColor[x][y] = yHalf + westWinds
-            if(x != imgx-1 and x <= imgx - 3 and landFall[x+1][y] == True and newCurr[x-2][y] == True):#draws arrow if next to continenal shelf
+            if(x != imgx-1 and x <= imgx - 3 and oceanCrustBord[x+1][y] == True and newCurr[x-2][y] == True):#draws arrow if next to continenal shelf
                 rightArrow(x,y)
-            if(x != imgx-1 and landFall[x+1][y] != True):#if not continental shelf, add only one neighbor in current direction and it fails test
+            if(x != imgx-1 and oceanCrustBord[x+1][y] != True):#if not continental shelf, add only one neighbor in current direction and it fails test
                 putpixel((x,y), black)
                 currentMovement.append([x+1,y])
                 alreadyInCurrent[x+1][y] = True
                 newCurr[x+1][y] = True
-                newTest = False
-            elif(x == imgx-1 and landFall[0][y] != True):
+                isInCurrentTest = False
+            elif(x == imgx-1 and oceanCrustBord[0][y] != True):
                 putpixel((0,y), black)
                 currentMovement.append([0,y])
                 alreadyInCurrent[0][y] = True
                 newCurr[0][y] = True
-                newTest = False
+                isInCurrentTest = False
         if(y == yHalf - eastWinds or y == yHalf + eastWinds):
             putpixel((x,y), (0,0,255))
             if (y == yHalf - eastWinds):#easterlies are new origin
                 currentColor[x][y] = yHalf - eastWinds
             elif(y == yHalf + eastWinds):
                 currentColor[x][y] = yHalf + eastWinds
-            if(x != 0 and x <= imgx - 3 and landFall[x-1][y] == True and newCurr[x+2][y] == True ):#draws arrow if next to continenal shelf
+            if(x != 0 and x <= imgx - 3 and oceanCrustBord[x-1][y] == True and newCurr[x+2][y] == True ):#draws arrow if next to continenal shelf
                 leftArrow(x,y)
-            if(x != 0 and landFall[x-1][y] != True):#if not continental shelf, add only one neighbor in current direction and it fails test
+            if(x != 0 and oceanCrustBord[x-1][y] != True):#if not continental shelf, add only one neighbor in current direction and it fails test
                 putpixel((x,y), black)
                 currentMovement.append([x-1,y])
                 alreadyInCurrent[x-1][y] = True
                 newCurr[x-1][y] = True
-                newTest = False
-            elif(x == 0 and landFall[imgx-1][y] != True):
+                isInCurrentTest = False
+            elif(x == 0 and oceanCrustBord[imgx-1][y] != True):
                 putpixel((imgx-1,y), black)
                 currentMovement.append([imgx-1,y])
                 alreadyInCurrent[imgx-1][y] = True
                 newCurr[imgx-1][y] = True
-                newTest = False
+                isInCurrentTest = False
         if(y == yHalf - polarWinds or y == yHalf + polarWinds ):
             putpixel((x,y), (0,0,255))
             if (y == yHalf - polarWinds):#polar current is new origin
                 currentColor[x][y] = yHalf - polarWinds
             elif(y == yHalf + polarWinds):
                 currentColor[x][y] = yHalf + polarWinds
-            if(x != 0 and x < imgx - 3 and landFall[x-1][y] == True and newCurr[x+2][y] == True ):#draws arrow if next to continenal shelf
+            if(x != 0 and x < imgx - 3 and oceanCrustBord[x-1][y] == True and newCurr[x+2][y] == True ):#draws arrow if next to continenal shelf
                 leftArrow(x,y)
-            if(x != 0 and landFall[x-1][y] != True):#if not continental shelf, add only one neighbor in current direction and it fails test
+            if(x != 0 and oceanCrustBord[x-1][y] != True):#if not continental shelf, add only one neighbor in current direction and it fails test
                 putpixel((x,y), black)
                 currentMovement.append([x-1,y])
                 alreadyInCurrent[x-1][y] = True
                 newCurr[x-1][y] = True
-                newTest = False
-            elif(x == 0 and landFall[imgx-1][y] != True):
+                isInCurrentTest = False
+            elif(x == 0 and oceanCrustBord[imgx-1][y] != True):
                 putpixel((imgx-1,y), black)
                 currentMovement.append([imgx-1,y])
                 alreadyInCurrent[imgx-1][y] = True
                 newCurr[imgx-1][y] = True
-                newTest = False
-            elif(x != 0 and landFall[x-1][y] == True):
-                newTest = False
-            elif(x == 0 and landFall[imgx-1][y] == True):
-                newTest = False   
+                isInCurrentTest = False
+            elif(x != 0 and oceanCrustBord[x-1][y] == True):
+                isInCurrentTest = False
+            elif(x == 0 and oceanCrustBord[imgx-1][y] == True):
+                isInCurrentTest = False   
                 
-        if (newTest == True):#if it passes test, look at all neighbors to add it to list to see if it's a current
-            if(y != 0 and landFall[x][y-1] != True and alreadyInCurrent[x][y-1] != True):
+        if (isInCurrentTest == True):#if it passes test, look at all neighbors to add it to list to see if it's a current
+            if(y != 0 and oceanCrustBord[x][y-1] != True and alreadyInCurrent[x][y-1] != True):
               currentMovement.append([x,y-1])
               currentColor[x][y-1] = currentColor[x][y]
               alreadyInCurrent[x][y-1] = True
-            if(y != imgy-1 and landFall[x][y+1] != True and alreadyInCurrent[x][y+1] != True):
+            if(y != imgy-1 and oceanCrustBord[x][y+1] != True and alreadyInCurrent[x][y+1] != True):
               currentMovement.append([x,y+1])
               currentColor[x][y+1] = currentColor[x][y]
               alreadyInCurrent[x][y+1] = True
-            if(x != 0 and landFall[x-1][y] != True and alreadyInCurrent[x-1][y] != True):
+            if(x != 0 and oceanCrustBord[x-1][y] != True and alreadyInCurrent[x-1][y] != True):
               currentMovement.append([x-1,y])
               currentColor[x-1][y] = currentColor[x][y]
               alreadyInCurrent[x-1][y] = True
-            elif(x == 0 and landFall[imgx-1][y] != True and alreadyInCurrent[imgx-1][y] != True):
+            elif(x == 0 and oceanCrustBord[imgx-1][y] != True and alreadyInCurrent[imgx-1][y] != True):
               currentMovement.append([imgx-1,y])
               currentColor[imgx-1][y] = currentColor[x][y]
               alreadyInCurrent[imgx-1][y] = True
-            if(x != imgx-1 and landFall[x+1][y] != True and alreadyInCurrent[x+1][y] != True):
+            if(x != imgx-1 and oceanCrustBord[x+1][y] != True and alreadyInCurrent[x+1][y] != True):
               currentMovement.append([x+1,y])
               currentColor[x+1][y] = currentColor[x][y]
               alreadyInCurrent[x+1][y] = True
-            elif(x == imgx-1 and landFall[0][y] != True and alreadyInCurrent[0][y] != True):
+            elif(x == imgx-1 and oceanCrustBord[0][y] != True and alreadyInCurrent[0][y] != True):
               currentMovement.append([0,y])
               currentColor[0][y] = currentColor[x][y]
               alreadyInCurrent[0][y] = True
-            if(x != imgx-1 and y != imgy-1 and landFall[x+1][y+1] != True and alreadyInCurrent[x+1][y+1] != True and (y+1 != yHalf - westWinds or y+1 != yHalf + westWinds)):
+            if(x != imgx-1 and y != imgy-1 and oceanCrustBord[x+1][y+1] != True and alreadyInCurrent[x+1][y+1] != True and (y+1 != yHalf - westWinds or y+1 != yHalf + westWinds)):
               currentMovement.append([x+1,y+1])
               currentColor[x+1][y+1] = currentColor[x][y]
               alreadyInCurrent[x+1][y+1] = True
-            if(x != 0 and y != 0 and landFall[x-1][y-1] != True and alreadyInCurrent[x-1][y-1] != True and (y-1 != yHalf - westWinds or y-1 != yHalf + westWinds)):
+            if(x != 0 and y != 0 and oceanCrustBord[x-1][y-1] != True and alreadyInCurrent[x-1][y-1] != True and (y-1 != yHalf - westWinds or y-1 != yHalf + westWinds)):
               currentMovement.append([x-1,y-1])
               currentColor[x-1][y-1] = currentColor[x][y]
               alreadyInCurrent[x-1][y-1] = True
-            if(x != imgx-1 and y != 0 and landFall[x+1][y-1] != True and alreadyInCurrent[x+1][y-1] != True and (y-1 != yHalf - westWinds or y-1 != yHalf + westWinds)):
+            if(x != imgx-1 and y != 0 and oceanCrustBord[x+1][y-1] != True and alreadyInCurrent[x+1][y-1] != True and (y-1 != yHalf - westWinds or y-1 != yHalf + westWinds)):
               currentMovement.append([x+1,y-1])
               currentColor[x+1][y-1] = currentColor[x][y]
               alreadyInCurrent[x+1][y-1] = True
-            if(x != 0 and y != imgy-1 and landFall[x-1][y+1] != True and alreadyInCurrent[x-1][y+1] != True and (y+1 != yHalf - westWinds or y+1 != yHalf + westWinds)):
+            if(x != 0 and y != imgy-1 and oceanCrustBord[x-1][y+1] != True and alreadyInCurrent[x-1][y+1] != True and (y+1 != yHalf - westWinds or y+1 != yHalf + westWinds)):
               currentMovement.append([x-1,y+1])
               currentColor[x-1][y+1] = currentColor[x][y]
               alreadyInCurrent[x-1][y+1] = True
@@ -1159,12 +1162,12 @@ newCurr = np.zeros(image.size)
 terrainOrigin = np.zeros(image.size)
 terrainTotal = np.zeros(image.size)
 prevHeight = np.zeros(image.size)
-landOrigin = np.zeros(image.size)
-landTotal = np.zeros(image.size)
+oceanCrustOrigin = np.zeros(image.size)
+oceanCrustTotal = np.zeros(image.size)
 terrainFall = np.zeros(image.size)
 alreadyInCurrent = np.zeros(image.size)
 currentColor = np.zeros(image.size)
-landFall = np.zeros(image.size)
+oceanCrustBord = np.zeros(image.size)
 borderShelf = np.zeros(image.size)
 continental = False
 oceanicPlate = True
@@ -1191,7 +1194,7 @@ converge = []
 diverge = []
 transform = []
 currentMovement = []
-landList = []
+oceanCrustList = []
 terrainList = []
 tectMovement = []
 isOceanic = []
